@@ -8,18 +8,23 @@ RUN wget https://github.com/Activiti/Activiti/releases/download/activiti-6.0.0/a
         unzip /tmp/activiti.zip -d /tmp && \
         unzip /tmp/activiti-6.0.0/wars/activiti-app.war -d ${CATALINA_HOME}/webapps/activiti-app && \
         unzip /tmp/activiti-6.0.0/wars/activiti-rest.war -d ${CATALINA_HOME}/webapps/activiti-rest && \
+        unzip /tmp/activiti-6.0.0/wars/activiti-admin.war -d ${CATALINA_HOME}/webapps/activiti-admin && \
         rm -rf /tmp/activiti*
 
 RUN wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}.zip -O /tmp/mysql-connector-java.zip && \
         unzip /tmp/mysql-connector-java.zip -d /tmp && \
         cp /tmp/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}.jar ${CATALINA_HOME}/webapps/activiti-app/WEB-INF/lib/ && \
         cp /tmp/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}.jar ${CATALINA_HOME}/webapps/activiti-rest/WEB-INF/lib/ && \
+        cp /tmp/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}/mysql-connector-java-${MYSQL_CONNECTOR_JAVA_VERSION}.jar ${CATALINA_HOME}/webapps/activiti-admin/WEB-INF/lib/ && \
         rm -rf /tmp/mysql-connector-java*
 
 RUN rm -rf ${CATALINA_HOME}/webapps/docs ${CATALINA_HOME}/webapps/examples
 
 ADD . /tmp/activiti6
+RUN mkdir -p ${CATALINA_HOME}/webapps/manager/META-INF
+RUN mkdir -p ${CATALINA_HOME}/webapps/ROOT
 RUN cp /tmp/activiti6/config/context.xml ${CATALINA_HOME}/webapps/manager/META-INF/
 RUN cp /tmp/activiti6/config/index.jsp ${CATALINA_HOME}/webapps/ROOT/
 
+RUN chmod a+x /tmp/activiti6/start.sh
 CMD ["/tmp/activiti6/start.sh"]
